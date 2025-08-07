@@ -30,7 +30,8 @@ def split(encodedImage: Image.Image, number: int, outputDir: Path):
         image = Image.new("1", (splitWidth, splitHeight))
         pixels = image.load()
         if not pixels:
-            raise ValueError(f"创建第 {i} 张图像失败")
+            print(f"创建第 {i} 张图像失败")
+            continue
         for y in range(splitHeight):
             for x in range(splitWidth):
                 pos = (x * scale + offsetX, y * scale + offsetY)
@@ -55,8 +56,6 @@ if __name__ == "__main__":
         encoded_image = Image.open(args.input)
     except Exception as e:
         raise ValueError(f"加载输入图像失败: {e}")
-    if not encoded_image:
-        raise ValueError("加载输入图像失败")
 
     if not args.output.exists():
         args.output.mkdir(parents=True, exist_ok=True)

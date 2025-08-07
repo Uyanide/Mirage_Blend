@@ -55,7 +55,12 @@ def merge(imagePaths: list[Path], size: tuple, scale: int) -> Image.Image:
             image = Image.open(path)
             image = binarize_image(resize_cover(image, (size[0] // scale, size[1] // scale)))
         except Exception as e:
-            raise ValueError(f"加载图像 {path} 失败: {e}")
+            print(f"加载图像 {path} 失败: {e}")
+            continue
+        imgPixels = image.load()
+        if not imgPixels:
+            print(f"加载第 {i} 张图像像素失败")
+            continue
 
         offset = i // 32
         offsetX = offset % scale
@@ -64,9 +69,6 @@ def merge(imagePaths: list[Path], size: tuple, scale: int) -> Image.Image:
         channel = (i % 32) // 8
         bit = (i % 32) % 8
 
-        imgPixels = image.load()
-        if not imgPixels:
-            raise ValueError(f"加载第 {i} 张图像像素失败")
         for y in range(image.size[1]):
             for x in range(image.size[0]):
                 pos = (x * scale + offsetX, y * scale + offsetY)
