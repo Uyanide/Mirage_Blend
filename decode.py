@@ -1,6 +1,5 @@
 from PIL import Image
 from pathlib import Path
-from argparse import ArgumentParser
 from tqdm import tqdm
 import math
 
@@ -19,7 +18,7 @@ def split(encodedImage: Image.Image, number: int, outputDir: Path):
     splitWidth = width // scale
     splitHeight = height // scale
 
-    for i in tqdm(range(number), desc="解码图像"):
+    for i in tqdm(range(number), desc="分离图像"):
         offset = i // 32
         offsetX = offset % scale
         offsetY = offset // scale
@@ -39,18 +38,19 @@ def split(encodedImage: Image.Image, number: int, outputDir: Path):
 
         image.save(outputDir / f"{i}.png", "PNG")
 
-    print(f"成功解码和 {number} 张图像到 {outputDir} 目录")
+    print(f"成功分离 {number} 张图像到 {outputDir} 目录")
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="从单张 PNG 图像中解码隐藏的图像")
+    from argparse import ArgumentParser
+    parser = ArgumentParser(description="从单张 PNG 图像中分离混合的图像")
     parser.add_argument("-i", "--input", type=Path, default=Path("encoded.png"), help="输入图像文件")
     parser.add_argument("-o", "--output", type=Path, default=Path("decoded"), help="输出图像目录")
-    parser.add_argument("-n", "--number", type=int, default=32, help="解码图像数量(不包含表图)")
+    parser.add_argument("-n", "--number", type=int, default=32, help="分离输出图像数量")
     args = parser.parse_args()
 
     if args.number < 1:
-        raise ValueError("解码图像数量必须大于 0")
+        raise ValueError("图像数量必须大于 0")
 
     try:
         encoded_image = Image.open(args.input)

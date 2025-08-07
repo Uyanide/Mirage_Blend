@@ -1,6 +1,5 @@
 from PIL import Image
 from pathlib import Path
-from argparse import ArgumentParser
 from tqdm import tqdm
 import math
 
@@ -50,7 +49,7 @@ def merge(imagePaths: list[Path], size: tuple, scale: int) -> Image.Image:
     if not retPixels:
         raise ValueError("加载像素失败")
 
-    for i, path in tqdm(enumerate(imagePaths), total=len(imagePaths), desc="合并图像"):
+    for i, path in tqdm(enumerate(imagePaths), total=len(imagePaths), desc="混合图像"):
         try:
             image = Image.open(path)
             image = binarize_image(resize_cover(image, (size[0] // scale, size[1] // scale)))
@@ -80,16 +79,17 @@ def merge(imagePaths: list[Path], size: tuple, scale: int) -> Image.Image:
 
 
 if __name__ == "__main__":
+    from argparse import ArgumentParser
     parser = ArgumentParser(description="将大量图像整合为单张 PNG 图像")
     parser.add_argument("-x", "--width", type=int, default=800, help="输出图像宽度")
     parser.add_argument("-y", "--height", type=int, default=800, help="输出图像高度")
     parser.add_argument("-i", "--input", type=Path, default=Path("images"), help="输入图像目录")
     parser.add_argument("-o", "--output", type=Path, default=Path("encoded.png"), help="输出图像路径")
-    parser.add_argument("-n", "--number", type=int, default=32, help="隐藏图像数量")
+    parser.add_argument("-n", "--number", type=int, default=32, help="输入图像数量")
     args = parser.parse_args()
 
     if args.number < 1:
-        raise ValueError("隐藏图像数量必须大于 0")
+        raise ValueError("图像数量必须大于 0")
 
     imagePaths = sorted(load_images_from_dir(args.input, args.number))
     print(f"检测到 {len(imagePaths)} 张图像")
